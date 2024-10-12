@@ -1,4 +1,4 @@
-using LinearAlgebra: Hermitian, diagm
+using LinearAlgebra: diagm
 
 export hamiltonian1, hamiltonian2, diagonalhamil
 
