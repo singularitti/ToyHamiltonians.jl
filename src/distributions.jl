@@ -3,13 +3,13 @@ using Random: AbstractRNG, default_rng
 
 import Random: rand
 
-export RandomEigen
+export EigvalsSampler
 
-struct RandomEigen{D<:Distribution,T,R<:AbstractRNG}
+struct EigvalsSampler{D<:Distribution,T,R<:AbstractRNG}
     dist::D
     type::T
     rng::R
 end
-RandomEigen(dist, type=Float64, rng=default_rng()) = RandomEigen(dist, type, rng)
+EigvalsSampler(dist, type=Float64, rng=default_rng()) = EigvalsSampler(dist, type, rng)
 
-rand(x::RandomEigen, dims::Integer...) = rand(x.rng, x.dist, dims...) .* oneunit(x.type)
+rand(s::EigvalsSampler, dims::Integer...) = rand(s.rng, s.dist, dims...) .* oneunit(s.type)
