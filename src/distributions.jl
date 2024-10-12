@@ -1,7 +1,13 @@
-using Distributions: Uniform, Normal
+using Distributions: Distribution, Uniform, Normal
 using Random: AbstractRNG
 
-export rand_uniform, rand_normal
+export RandomEigen, rand_uniform, rand_normal
+
+struct RandomEigen{R<:AbstractRNG,D<:Distribution,T}
+    rng::R
+    dist::D
+    type::T
+end
 
 rand_uniform(rng::AbstractRNG, ::Type{X}, dims::Integer...) where {X} =
     rand(rng, X, Uniform(0, 1), dims...) .* oneunit(X)
