@@ -25,6 +25,11 @@ struct EigvecsSampler{R<:AbstractRNG,T,D<:Distribution} <: Sampler{T}
         new{typeof(rng),typeof(type),typeof(dist)}(rng, type, dist)
 end
 
+function Hamiltonian(s₁::EigvalsSampler, s₂::EigvecsSampler, m::Integer)
+    evals, evecs = sort(rand(s₁, m)), collect(rand(s₂, m, m))
+    return Hamiltonian(Eigen(evals, evecs))
+end
+
 rand(s::EigvalsSampler, dims::Integer...) = rand(s.rng, s.dist, dims...) .* oneunit(s.type)
 function rand(s::EigvecsSampler, m::Integer, n::Integer)
     matrix = rand(s.rng, s.dist, m, n) .* oneunit(s.type)
