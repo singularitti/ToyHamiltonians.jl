@@ -1,4 +1,4 @@
-using LinearAlgebra: Diagonal, diag, ishermitian
+using LinearAlgebra: Diagonal, Eigen, diag
 using StaticArrays: SMatrix, SVector, SHermitianCompact, MArray
 
 export Hamiltonian, DiagonalHamiltonian
@@ -16,6 +16,10 @@ struct Hamiltonian{N,T} <: AbstractHamiltonian{N,T}
         N, T = size(A, 1), eltype(A)
         return new{N,T}(SMatrix{N,N,T}(A))
     end
+end
+function Hamiltonian(E::Eigen)
+    Λ, V = E.values, E.vectors
+    return Hamiltonian(V * Diagonal(Λ) * inv(V))  # `Diagonal` is faster than `diagm`
 end
 
 struct DiagonalHamiltonian{N,T} <: AbstractHamiltonian{N,T}
