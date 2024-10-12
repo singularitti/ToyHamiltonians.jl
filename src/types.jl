@@ -1,9 +1,22 @@
-using LinearAlgebra: Diagonal, diag
-using StaticArrays: SVector, SHermitianCompact, MArray
+using LinearAlgebra: Diagonal, diag, ishermitian
+using StaticArrays: SMatrix, SVector, SHermitianCompact, MArray
 
-export DiagonalHamiltonian
+export Hamiltonian, DiagonalHamiltonian
 
 abstract type AbstractHamiltonian{N,T} <: AbstractMatrix{T} end
+
+struct Hamiltonian{N,T} <: AbstractHamiltonian{N,T}
+    data::SHermitianCompact{N,T}
+    function Hamiltonian(V::AbstractVector)
+        N, T = length(V), eltype(V)
+        return new{N,T}(SHermitianCompact{N,T}(V))
+    end
+    function Hamiltonian(A::AbstractMatrix)
+        @assert ishermitian(A) "Hamiltonian matrices must be Hermitian!"
+        N, T = size(A, 1), eltype(A)
+        return new{N,T}(SMatrix{N,N,T}(A))
+    end
+end
 
 struct DiagonalHamiltonian{N,T} <: AbstractHamiltonian{N,T}
     data::Diagonal{T,SVector{N,T}}
