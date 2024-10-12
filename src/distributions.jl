@@ -1,13 +1,16 @@
 using Distributions: Distribution, Uniform, Normal
-using Random: AbstractRNG
+using Random: AbstractRNG, default_rng
 
-export RandomEigen, rand_uniform, rand_normal
+import Random: rand
 
-struct RandomEigen{R<:AbstractRNG,D<:Distribution,T}
-    rng::R
+export RandomEigen
+
+struct RandomEigen{D<:Distribution,T,R<:AbstractRNG}
     dist::D
     type::T
+    rng::R
 end
+RandomEigen(dist, type=Float64, rng=default_rng()) = RandomEigen(dist, type, rng)
 
 rand_uniform(rng::AbstractRNG, ::Type{X}, dims::Integer...) where {X} =
     rand(rng, X, Uniform(0, 1), dims...) .* oneunit(X)
