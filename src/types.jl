@@ -1,7 +1,8 @@
 using LinearAlgebra: Diagonal, Eigen, diag
+using IsApprox: Approx, ishermitian
 using StaticArrays: SMatrix, SVector, SHermitianCompact, MArray
 
-export Hamiltonian, DiagonalHamiltonian
+export Hamiltonian, DiagonalHamiltonian, isapprox_rtol, set_isapprox_rtol
 
 abstract type AbstractHamiltonian{N,T} <: AbstractMatrix{T} end
 
@@ -12,7 +13,7 @@ struct Hamiltonian{N,T} <: AbstractHamiltonian{N,T}
         return new{N,T}(SHermitianCompact{N,T}(V))
     end
     function Hamiltonian(A::AbstractMatrix)
-        @assert ishermitian(A) "Hamiltonian matrices must be Hermitian!"
+        @assert ishermitian(A, Approx(; rtol=isapprox_rtol())) "Hamiltonian matrices must be Hermitian!"
         N, T = size(A, 1), eltype(A)
         return new{N,T}(SMatrix{N,N,T}(A))
     end
@@ -34,6 +35,12 @@ function DiagonalHamiltonian(A::AbstractMatrix)
     V = diag(A)
     return DiagonalHamiltonian(V)
 end
+
+const ISAPPROX_RTOL = Ref(1e-15)
+
+isapprox_rtol() = ISAPPROX_RTOL[]
+# See https://github.com/KristofferC/OhMyREPL.jl/blob/8b0fc53/src/BracketInserter.jl#L44-L45
+set_isapprox_rtol(rtol) = ISAPPROX_RTOL[] = rtol
 
 Base.parent(h::AbstractHamiltonian) = h.data
 
