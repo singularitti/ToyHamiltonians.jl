@@ -6,11 +6,11 @@ import Random: rand
 
 export EigvalsSampler, EigvecsSampler
 
-struct EigvalsSampler{R<:AbstractRNG,T,D<:Truncated} <: Sampler{T}
+struct EigvalsSampler{R<:AbstractRNG,T,D<:Distribution} <: Sampler{T}
     rng::R
     type::T
     dist::D
-    function EigvalsSampler(dist::Distribution, type=Float64, rng=default_rng())
+    function EigvalsSampler(dist, type=Float64, rng=default_rng())
         lower, upper = zero(type), one(type)
         dist = truncated(dist; lower=lower, upper=upper)
         return new{typeof(rng),typeof(type),typeof(dist)}(rng, type, dist)
