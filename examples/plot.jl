@@ -39,28 +39,39 @@ PLOT_DEFAULTS = Dict(
 
 set_isapprox_rtol(1e-13)
 N = 1000
-nbins = 50
-dist = Cauchy(0.35, 0.2)
-dist = Arcsine(0.2, 0.9)
-dist = Beta(2, 2)
-dist = Exponential(1)
-dist = Laplace(0.5, 0.1)
-dist = LogitNormal(0, 1)
-dist = LogUniform(0.1, 0.9)
-dist = Uniform(0, 0.8)
-dist = MixtureModel([Normal(0.2, 0.1), Normal(0.5, 0.1), Normal(0.9, 0.1)], [0.3, 0.4, 0.3])
-dist = MixtureModel([Cauchy(0.25, 0.2), Laplace(0.5, 0.1)], [0.6, 0.4])
-dist = MixtureModel(
-    [LogUniform(0.05, 0.3), LogUniform(0.3, 0.7), LogUniform(0.7, 1)], [0.2, 0.3, 0.5]
-)
+nbins = 40
+distributions = [
+    Cauchy(0.35, 0.2),
+    Arcsine(0.2, 0.9),
+    Beta(2, 2),
+    Exponential(1),
+    Laplace(0.5, 0.1),
+    LogitNormal(0, 1),
+    LogUniform(0.1, 0.9),
+    Uniform(0, 0.8),
+    MixtureModel([Normal(0.2, 0.1), Normal(0.5, 0.1), Normal(0.9, 0.1)], [0.3, 0.4, 0.3]),
+    MixtureModel([Cauchy(0.25, 0.2), Laplace(0.5, 0.1)], [0.6, 0.4]),
+    MixtureModel(
+        [LogUniform(0.05, 0.3), LogUniform(0.3, 0.7), LogUniform(0.7, 1)], [0.2, 0.3, 0.5]
+    ),
+    MixtureModel(
+        [Uniform(0, 0.2), Uniform(0.2, 0.5), Uniform(0.5, 0.7), Uniform(0.7, 1)],
+        [0.1, 0.2, 0.2, 0.5],
+    ),
+]
+foreach(distributions) do distribution
+    sampler = EigvalsSampler(distribution)
+    Λ = rand(sampler, N)
+    V = eigvecs(hamiltonian1(N))
+    H = Hamiltonian(Eigen(Λ, V))
 
-sampler = EigvalsSampler(dist)
-Λ = rand(sampler, N)
-V = eigvecs(hamiltonian1(N))
-H = Hamiltonian(Eigen(Λ, V))
-
-plot(; PLOT_DEFAULTS...)
-histogram!(eigvals(H); nbins=nbins, normalize=true, label="solve the Hamiltonian")
-histogram!(Λ; nbins=nbins, normalize=true, label="original random eigvals")
-plot!(truncated(dist; lower=0, upper=1); label="original distribution")
-xlims!(0, 1)
+    plot(; PLOT_DEFAULTS...)
+    histogram!(eigvals(H); nbins=nbins, normalize=true, label="solve the Hamiltonian")
+    histogram!(Λ; nbins=nbins, normalize=true, label="original random eigvals")
+    plot!(truncated(distribution; lower=0, upper=1); label="original distribution")
+    xlims!(0, 1)
+    title!(
+        "Eigenvalues with distribution: " * string(distribution)[1:(end > 40 ? 40 : end)]
+    )
+    savefig(string(distribution)[1:10] * ".png")
+end
