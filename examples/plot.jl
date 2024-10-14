@@ -61,8 +61,8 @@ distributions = [
 ]
 foreach(distributions) do distribution
     sampler = EigvalsSampler(distribution)
-    Λ = rand(sampler, N)
-    V = eigvecs(hamiltonian1(N))
+    Λ = rand(EigvalsSampler(distribution), N)
+    V = rand(EigvecsSampler(distribution), N, N)
     H = Hamiltonian(Eigen(Λ, V))
 
     plot(; PLOT_DEFAULTS...)
