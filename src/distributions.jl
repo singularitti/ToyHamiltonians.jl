@@ -34,5 +34,5 @@ rand(s::EigvalsSampler, dims::Integer...) = rand(s.rng, s.dist, dims...) .* oneu
 function rand(s::EigvecsSampler, m::Integer, n::Integer)
     matrix = rand(s.rng, s.dist, m, n) .* oneunit(s.type)
     q, _ = qr(matrix)
-    return q
+    return collect(q)
 end
