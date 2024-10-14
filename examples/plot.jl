@@ -60,7 +60,6 @@ distributions = [
     ),
 ]
 foreach(distributions) do distribution
-    sampler = EigvalsSampler(distribution)
     Λ = rand(EigvalsSampler(distribution), N)
     V = rand(EigvecsSampler(distribution), N, N)
     H = Hamiltonian(Eigen(Λ, V))
