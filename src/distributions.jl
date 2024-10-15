@@ -1,4 +1,4 @@
-using Distributions: Distribution, Truncated, Uniform, Normal, truncated
+using Distributions: Distribution
 using LinearAlgebra: qr
 using Random: AbstractRNG, Sampler, default_rng
 
@@ -11,8 +11,6 @@ struct EigvalsSampler{R<:AbstractRNG,T,D<:Distribution} <: Sampler{T}
     type::T
     dist::D
     function EigvalsSampler(dist, type=Float64, rng=default_rng())
-        lower, upper = zero(type), one(type)
-        dist = truncated(dist; lower=lower, upper=upper)
         return new{typeof(rng),typeof(type),typeof(dist)}(rng, type, dist)
     end
 end
