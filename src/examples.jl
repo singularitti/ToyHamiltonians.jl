@@ -1,6 +1,6 @@
 using LinearAlgebra: diagm
 
-export hamiltonian1, hamiltonian2, diagonalhamil
+export hamiltonian1, hamiltonian2, diagonalhamil, tridiagonalhamil
 
 function hamiltonian1(N, α=10, β=0.01)
     H = diagm(α * rand(N))
@@ -23,3 +23,5 @@ function hamiltonian2(N, α=1, β=0.01)
 end
 
 diagonalhamil(N, α=10) = α * diagm(sort(rand(N)))
+
+tridiagonalhamil(N, α=10, β=10) = TridiagonalHamiltonian(α * rand(N), β * rand(N - 1))
