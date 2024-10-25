@@ -1,7 +1,8 @@
-using LinearAlgebra: Diagonal, Eigen, Hermitian, diag
+using LinearAlgebra: Diagonal, Eigen, Hermitian, Tridiagonal, diag
 using IsApprox: Approx, ishermitian
 
-export Hamiltonian, DiagonalHamiltonian, isapprox_rtol, set_isapprox_rtol
+export Hamiltonian,
+    DiagonalHamiltonian, TridiagonalHamiltonian, isapprox_rtol, set_isapprox_rtol
 
 abstract type AbstractHamiltonian{N,T} <: AbstractMatrix{T} end
 
@@ -29,6 +30,15 @@ end
 function DiagonalHamiltonian(A::AbstractMatrix)
     V = diag(A)
     return DiagonalHamiltonian(V)
+end
+
+struct TridiagonalHamiltonian{N,T} <: AbstractHamiltonian{N,T}
+    data::Tridiagonal{T,Vector{T}}
+    function TridiagonalHamiltonian(dv::AbstractVector, ev::AbstractVector)
+        @assert all(isreal.(dv)) "Hamiltonian matrices reuqire diagoanl elements to be real!"
+        N, T = length(dv), promote_type(eltype(dv), eltype(ev))
+        return new{N,T}(Tridiagonal(ev, dv, conj(ev)))
+    end
 end
 
 const ISAPPROX_RTOL = Ref(1e-15)
