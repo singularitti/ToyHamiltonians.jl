@@ -22,6 +22,6 @@ function hamiltonian2(N, α=1, β=0.01)
     return Hamiltonian(Hermitian(H))
 end
 
-diagonalhamil(N, α=10) = α * diagm(sort(rand(N)))
+diagonalhamil(N, α=10) = Hamiltonian(α * diagm(sort(rand(N))))
 
 tridiagonalhamil(N, α=10, β=10) = TridiagonalHamiltonian(α * rand(N), β * rand(N - 1))
