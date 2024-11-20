@@ -1,6 +1,8 @@
 using LinearAlgebra: Diagonal, Eigen, Hermitian, Tridiagonal, diag
 using IsApprox: Approx, ishermitian
 
+import LinearAlgebra: ishermitian
+
 export Hamiltonian,
     DiagonalHamiltonian, TridiagonalHamiltonian, isapprox_rtol, set_isapprox_rtol
 
@@ -54,3 +56,6 @@ Base.size(h::AbstractHamiltonian) = size(parent(h))
 Base.getindex(h::AbstractHamiltonian, i) = getindex(parent(h), i)
 
 Base.IndexStyle(::Type{<:AbstractHamiltonian}) = IndexLinear()
+
+# See https://github.com/JuliaLang/julia/blob/fb5e96a/stdlib/LinearAlgebra/src/symmetric.jl#L437
+ishermitian(h::AbstractHamiltonian) = true
